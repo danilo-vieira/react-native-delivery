@@ -85,10 +85,10 @@ const Dashboard: React.FC = () => {
     }
 
     loadCategories();
-  }, []);
+  }, [selectedCategory, searchValue]);
 
   function handleSelectCategory(id: number): void {
-    setSelectedCategory(id);
+    setSelectedCategory(oldState => (oldState === id ? undefined : id));
   }
 
   return (

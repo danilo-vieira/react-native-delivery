@@ -74,7 +74,7 @@ const FoodDetails: React.FC = () => {
   useEffect(() => {
     async function loadFood(): Promise<void> {
       const response = await api.get<Food>(`foods/${routeParams.id}`);
-      const favoriteResponse = await api.get<Food[]>('favorites');
+      // const favoriteResponse = await api.get<Food[]>('favorites');
 
       const parsedFood = {
         ...response.data,
@@ -88,13 +88,13 @@ const FoodDetails: React.FC = () => {
         }),
       );
 
-      const findFavorite = favoriteResponse.data.find(
-        favorite => favorite.id === response.data.id,
-      );
+      // const findFavorite = favoriteResponse.data.find(
+      //   favorite => favorite.id === response.data.id,
+      // );
 
-      if (findFavorite) {
-        setIsFavorite(true);
-      }
+      // if (findFavorite) {
+      //   setIsFavorite(true);
+      // }
 
       setFood(parsedFood);
       setExtras(foodExtras);
@@ -126,6 +126,7 @@ const FoodDetails: React.FC = () => {
           quantity: extra.quantity - 1,
         };
       }
+
       return extra;
     });
 
@@ -156,15 +157,21 @@ const FoodDetails: React.FC = () => {
       0,
     );
 
-    return totalExtraPrice + food.price * foodQuantity;
+    return formatValue(totalExtraPrice + food.price * foodQuantity);
   }, [extras, food, foodQuantity]);
 
   async function handleFinishOrder(): Promise<void> {
-    await api.post('orders', {
+    const data = {
       ...food,
       product_id: food.id,
       extras,
-    });
+    };
+
+    delete data.id;
+
+    await api.post('orders', data);
+
+    navigation.navigate('DashboardStack');
   }
 
   // Calculate the correct icon name
